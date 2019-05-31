@@ -57,7 +57,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/titulo"
         android:textAlignment="center"
-        android:textColor="#254F6F"
+        android:textColor="@android:color/black"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -71,10 +71,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:contentDescription="logo"
+        android:contentDescription="@android:string/dialog_alert_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConectar"
-        app:srcCompat="@mipmap/logochat" />
+        app:layout_constraintTop_toBottomOf="@+id/btnConectar" />
 
 </android.support.constraint.ConstraintLayout>
