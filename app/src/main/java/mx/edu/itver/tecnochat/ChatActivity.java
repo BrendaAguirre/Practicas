@@ -1,10 +1,9 @@
 package mx.edu.itver.tecnochat;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,7 +33,9 @@ public class ChatActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
 
     private ListView chat;
-    private HiloMensajes tareaCliente;
+    private HiloMensajes tareaHiloMensajes;
+
+    private Handler mainHandler = new Handler();
 
     final Context context = this;
 
@@ -46,7 +47,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         Intent intent = getIntent();
-
+        // Se extraen los parametros de la Ventana Principal
         String direccionIP = intent.getStringExtra(MainActivity.EXTRA_DIP);
         String usuario = intent.getStringExtra(MainActivity.EXTRA_USR);
 
@@ -56,9 +57,11 @@ public class ChatActivity extends AppCompatActivity {
 
         chat = findViewById(R.id.chat);
 
+        // Se requiere un adaptador, para controlar el despliegue de los datos del arreglo en la Lista
+        // el adaptador es como la clase Model que almacena los datos de un componente, en Java Standard
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, listItems);
 
-
+        // Se asocia el adaptador al ListView (chat)
         chat.setAdapter(adapter);
 
         String response = "";
@@ -69,9 +72,9 @@ public class ChatActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        tareaCliente = new HiloMensajes(this, direccionIP, 3333, usuario);
-
-        tareaCliente.start();
+        // Se crea la tarea que llevara la recepción de los mensajes
+        tareaHiloMensajes = new HiloMensajes( direccionIP, 3333, usuario);
+        tareaHiloMensajes.start(); // se inicia la tarea
 
         findViewById(R.id.btnEnviar).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,28 +83,30 @@ public class ChatActivity extends AppCompatActivity {
                 EditText edtMensaje = findViewById(R.id.edtMensaje);
                 String mensaje = edtMensaje.getText().toString();
 
-                addRespuesta(mensaje);
+                addToList(mensaje); // agregamos el mensaje a la lista
 
-                edtMensaje.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                edtMensaje.setText(""); // borramos el texto de la caja de texto
 
-                tareaCliente.enviar(mensaje);
+                edtMensaje.onEditorAction(EditorInfo.IME_ACTION_DONE); // escondemos el teclado
+
+                tareaHiloMensajes.enviar(mensaje); // enviamos el mensaje al servidor
             }
         });
 
     }
 
-    void addRespuesta(String respuesta) {
+    void addToList(String respuesta) {
         String fechaHora = formatterMDY.format(Calendar.getInstance().getTime());
         listItems.add(fechaHora + " < " + respuesta);
         adapter.notifyDataSetChanged();
-
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
-        tareaCliente.salir = true;
+        tareaHiloMensajes.cerrar();
+
+        super.onBackPressed();
 
     }
 
@@ -120,16 +125,14 @@ public class ChatActivity extends AppCompatActivity {
 
         boolean salir = false;
 
-        HiloMensajes(ChatActivity _parent, String _direccionIP, int _puerto, String _usuario) {
-            parent = _parent;
+        HiloMensajes(String _direccionIP, int _puerto, String _usuario) {
+
             direccionIP = _direccionIP;
             puerto = _puerto;
             usuario = _usuario;
         }
 
         public void run() {
-            String fechaHora;
-
 
             try {
                 clientSocket = new Socket(direccionIP, puerto);
@@ -141,7 +144,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 buffer = in.readLine(); // Leer bienvenida
 
-                parent.addRespuesta(buffer);
+                this.addRespuesta(buffer);
 
                 out.println(usuario);
 
@@ -149,7 +152,7 @@ public class ChatActivity extends AppCompatActivity {
                     buffer = in.readLine();
 
                     if (buffer != null) {
-                        parent.addRespuesta(buffer);
+                        this.addRespuesta(buffer);
                     }
                 }
             } catch (IOException ioe) {
@@ -162,22 +165,34 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
 
+        void addRespuesta(final String mensaje){
+            // Si no se manda a invocar el metodo addList
+            // desde este Handler, marca un error ya que
+            // el componente de la Lista no pertenece a este thread
+            mainHandler.post(new Runnable(){
+                @Override
+                public void run() {
+                   addToList(mensaje);
+                }
+            });
+        }
+
         void enviar(String mensaje) {
-            out.println(mensaje);
+            if (out!=null)
+              out.println(mensaje);
         }
 
         void cerrar() {
             try {
+                enviar(usuario+" se ha desconectado");
+                this.salir = true;
                 clientSocket.close();
                 in.close();
                 out.close();
-                this.salir = true;
             } catch (IOException ex) {
                 Log.v("error al cerrar", ex.getMessage());
             }
         }
-
-
     }
 }
 
