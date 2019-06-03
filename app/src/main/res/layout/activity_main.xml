@@ -66,14 +66,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="257dp"
-        android:layout_height="171dp"
+        android:layout_width="234dp"
+        android:layout_height="163dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="8dp"
-        android:contentDescription="@android:string/dialog_alert_title"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConectar" />
+        app:layout_constraintTop_toBottomOf="@+id/btnConectar"
+        app:srcCompat="@mipmap/logochat" />
 
 </android.support.constraint.ConstraintLayout>

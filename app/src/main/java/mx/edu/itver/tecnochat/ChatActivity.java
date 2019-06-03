@@ -1,7 +1,9 @@
 package mx.edu.itver.tecnochat;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -155,13 +157,15 @@ public class ChatActivity extends AppCompatActivity {
                         this.addRespuesta(buffer);
                     }
                 }
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
 
                 Log.v("IOExcepcion:", ioe.getMessage());
 
-            } catch (Exception e) {
+                alerta("IOExcepcion",ioe.getMessage());
 
+            } catch (Exception e) {
                 Log.v("Excepcion!:", e.getMessage());
+                alerta("Excepcion",e.getMessage());
             }
         }
 
@@ -178,8 +182,11 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         void enviar(String mensaje) {
-            if (out!=null)
-              out.println(mensaje);
+            if (out!=null) {
+                out.println(mensaje);
+            } else {
+                alerta("Error","Sin conexión al servidor "+direccionIP+". Revise su estado de red y la dirección IP especificada.");
+            }
         }
 
         void cerrar() {
@@ -193,10 +200,31 @@ public class ChatActivity extends AppCompatActivity {
                 Log.v("error al cerrar", ex.getMessage());
             }
         }
+
+        void alerta(final String titulo, final String msg){
+
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (ChatActivity.this!=null){
+
+                        new AlertDialog.Builder(ChatActivity.this.context)
+                                .setTitle(titulo)
+                                .setMessage(msg)
+                                .setCancelable(false)
+                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if(ChatActivity.this!=null) {
+                                            ChatActivity.this.finish();
+                                        }
+                                    }
+                                }).show();
+                    }
+                }
+            });
+
+        }
+
     }
 }
-
-/*
-
-
- */
