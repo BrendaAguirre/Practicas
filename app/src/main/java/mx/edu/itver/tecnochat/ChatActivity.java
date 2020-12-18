@@ -52,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
         // Se extraen los parametros de la Ventana Principal
         String direccionIP = intent.getStringExtra(MainActivity.EXTRA_DIP);
         String usuario = intent.getStringExtra(MainActivity.EXTRA_USR);
+        String password = intent.getStringExtra(MainActivity.EXTRA_PAS);
 
         formatterMDY = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 
@@ -75,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         // Se crea la tarea que llevara la recepción de los mensajes
-        tareaHiloMensajes = new HiloMensajes( direccionIP, 3333, usuario);
+        tareaHiloMensajes = new HiloMensajes( direccionIP, 3333, usuario, password);
         tareaHiloMensajes.start(); // se inicia la tarea
 
         findViewById(R.id.btnEnviar).setOnClickListener(new View.OnClickListener() {
@@ -122,12 +123,13 @@ public class ChatActivity extends AppCompatActivity {
         String direccionIP = "";
         int puerto = 0;
         String usuario = "";
+        String password = "";
 
         ChatActivity parent = null;
 
         boolean salir = false;
 
-        HiloMensajes(String _direccionIP, int _puerto, String _usuario) {
+        HiloMensajes(String _direccionIP, int _puerto, String _usuario, String _password) {
 
             direccionIP = _direccionIP;
             puerto = _puerto;

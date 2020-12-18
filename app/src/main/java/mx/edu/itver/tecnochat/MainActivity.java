@@ -9,6 +9,7 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_DIP = "mx.edu.itver.ChatTecno.DIP";
     public final static String EXTRA_USR = "mx.edu.itver.ChatTecno.USR";
+    public final static String EXTRA_PAS = "mx.edu.itver.ChatTecno.PAS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +27,13 @@ public class MainActivity extends AppCompatActivity {
                 EditText edtUsuario = findViewById(R.id.edtUsuario);
                 String usuario = edtUsuario.getText().toString();
 
+                EditText edtPassword = findViewById(R.id.edtPassword);
+                String password = edtPassword.getText().toString();
+
 
                 intent.putExtra(EXTRA_DIP,direccionIP);
                 intent.putExtra(EXTRA_USR,usuario);
+                intent.putExtra(EXTRA_PAS,password);
 
                 startActivity(intent);
             }
