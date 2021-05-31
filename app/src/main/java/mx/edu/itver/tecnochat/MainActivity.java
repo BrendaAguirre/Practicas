@@ -3,6 +3,7 @@ package mx.edu.itver.tecnochat;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -23,9 +24,16 @@ public class MainActivity extends AppCompatActivity {
                 EditText edtDireccionIP = findViewById(R.id.edtDireccionIP);
                 String direccionIP = edtDireccionIP.getText().toString();
 
+                edtDireccionIP.setOnKeyListener(new View.OnKeyListener(){
+                    @Override
+                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                         System.out.println(keyEvent.getCharacters());
+                         return true;
+                    }
+                });
+
                 EditText edtUsuario = findViewById(R.id.edtUsuario);
                 String usuario = edtUsuario.getText().toString();
-
 
                 intent.putExtra(EXTRA_DIP,direccionIP);
                 intent.putExtra(EXTRA_USR,usuario);

@@ -75,7 +75,7 @@ public class ChatActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         // Se crea la tarea que llevara la recepción de los mensajes
-        tareaHiloMensajes = new HiloMensajes( direccionIP, 3333, usuario);
+        tareaHiloMensajes = new HiloMensajes( direccionIP, 4444, usuario);
         tareaHiloMensajes.start(); // se inicia la tarea
 
         findViewById(R.id.btnEnviar).setOnClickListener(new View.OnClickListener() {
@@ -128,7 +128,6 @@ public class ChatActivity extends AppCompatActivity {
         boolean salir = false;
 
         HiloMensajes(String _direccionIP, int _puerto, String _usuario) {
-
             direccionIP = _direccionIP;
             puerto = _puerto;
             usuario = _usuario;
@@ -149,6 +148,10 @@ public class ChatActivity extends AppCompatActivity {
                 this.addRespuesta(buffer);
 
                 out.println(usuario);
+
+
+
+
 
                 while (!this.salir) {
                     buffer = in.readLine();
