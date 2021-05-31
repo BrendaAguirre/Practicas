@@ -4,6 +4,7 @@
     <string name="btnConectar">Conectar</string>
     <string name="edtDirecionIP">Dirección IP</string>
     <string name="edtUsuario">Usuario</string>
+    <string name="edtPassword">Password</string>
     <string name="edtMensaje">Mensaje</string>
     <string name="btnEnviar">Enviar</string>
     <string name="element_text"></string>
